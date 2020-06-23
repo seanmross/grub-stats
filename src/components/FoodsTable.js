@@ -7,6 +7,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import TableFooter from "@material-ui/core/TableFooter";
+import TablePagination from "@material-ui/core/TablePagination";
 
 // const foodNutrients = {
 //   1003: "Protein",
@@ -29,8 +31,15 @@ const getNutrientValue = (nutrients = [], id) => {
   return nutrient[0] ? nutrient[0].value : "-";
 };
 
-const FoodsTable = ({ data }) => {
-    return (
+const FoodsTable = ({
+  foods,
+  totalHits,
+  currentPage,
+  handleChangePage,
+}) => {
+  return (
+    foods &&
+    foods.length > 0 && (
       <TableContainer component={Paper}>
         <Table className={styles.table} aria-label="simple table">
           <TableHead>
@@ -43,8 +52,8 @@ const FoodsTable = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data &&
-              data.map((food) => (
+            {foods &&
+              foods.map((food) => (
                 <TableRow key={food.fdcId}>
                   <TableCell component="th" scope="row">
                     {food.description}
@@ -68,9 +77,28 @@ const FoodsTable = ({ data }) => {
                 </TableRow>
               ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                colSpan={3}
+                count={totalHits}
+                rowsPerPage={foods.length}
+                page={currentPage - 1}
+                SelectProps={{
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                }}
+                onChangePage={handleChangePage}
+                // onChangeRowsPerPage={handleChangeRowsPerPage}
+                // ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
-    );
-}
+    )
+  );
+};
 
 export default FoodsTable;

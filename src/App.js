@@ -6,7 +6,7 @@ class App extends React.Component {
   state = {
     error: null,
     isLoaded: true,
-    foods: [],
+    foods: null,
   };
 
   handleSearch = (e) => {
@@ -22,36 +22,29 @@ class App extends React.Component {
 
       fetch(endpoint)
         .then((res) => res.json())
-        .then(res => {
-          // Refine search to look for exact match only
-          if (res.totalHits && res.totalHits !== 0) {
-            const foods = res.foods.filter(
-              (food) => food.description.toLowerCase() === search
-            );
-            return { foods };
-          } else {
-            return res;
-          }
-        })
+        // .then(res => {
+        //   // Refine search to look for exact match only
+        //   if (res.totalHits && res.totalHits !== 0) {
+        //     const foods = res.foods.filter(
+        //       (food) => food.description.toLowerCase() === search
+        //     );
+        //     return { foods };
+        //   } else {
+        //     return res;
+        //   }
+        // })
         .then(
           (result) => {
             console.log(result);
 
-            if (result.totalHits === 0) {
-              const error = { message: `No results found for: "${search}"` };
-
-              this.setState({
-                isLoaded: true,
-                error,
-                foods: [],
-              });
-            } else {
-              this.setState({
-                isLoaded: true,
-                error: null,
-                foods: result.foods,
-              });
-            }
+            this.setState({
+              isLoaded: true,
+              error: null,
+              foods: result.foods,
+              totalHits: result.totalHits,
+              currentPage: result.currentPage,
+              query: search,
+            });
           },
           (error) => {
             this.setState({
@@ -63,8 +56,37 @@ class App extends React.Component {
     }
   };
 
+  handleChangePage = () => {
+    console.log('page change')
+  }
+
   render() {
-    const { error, isLoaded, foods } = this.state;
+    const {
+      error,
+      isLoaded,
+      foods,
+      query,
+      totalHits,
+      currentPage,
+    } = this.state;
+
+    const displayLoading = <div>Loading...</div>;
+
+    const displayResults = (
+      <div>
+        {isLoaded && foods && (
+          <div>
+            {totalHits} results for "{query}"
+          </div>
+        )}
+        <FoodsTable
+          foods={foods}
+          totalHits={totalHits}
+          currentPage={currentPage}
+          handleChangePage={this.handleChangePage}
+        />
+      </div>
+    );
 
     return (
       <div className="App">
@@ -72,8 +94,12 @@ class App extends React.Component {
         <form onSubmit={this.handleSearch}>
           <input autoFocus type="text" name="search" />
           <button>Search</button>
-          {error && <div>Error fetching data: {error.message}</div>}
-          {!isLoaded ? <div>Loading...</div> : <FoodsTable data={foods} />}
+          {error && (
+            <div>
+              Error fetching data: {error.message}
+            </div>
+          )}
+          {!isLoaded ? displayLoading : displayResults}
         </form>
       </div>
     );
