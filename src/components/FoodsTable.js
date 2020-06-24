@@ -7,8 +7,6 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import TableFooter from "@material-ui/core/TableFooter";
-import TablePagination from "@material-ui/core/TablePagination";
 
 // const foodNutrients = {
 //   1003: "Protein",
@@ -31,15 +29,10 @@ const getNutrientValue = (nutrients = [], id) => {
   return nutrient[0] ? nutrient[0].value : "-";
 };
 
-const FoodsTable = ({
-  foods,
-  totalHits,
-  currentPage,
-  handleChangePage,
-}) => {
+const FoodsTable = ({ data }) => {
   return (
-    foods &&
-    foods.length > 0 && (
+    data &&
+    data.length > 0 && (
       <TableContainer component={Paper}>
         <Table className={styles.table} aria-label="simple table">
           <TableHead>
@@ -52,8 +45,8 @@ const FoodsTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {foods &&
-              foods.map((food) => (
+            {data &&
+              data.map((food) => (
                 <TableRow key={food.fdcId}>
                   <TableCell component="th" scope="row">
                     {food.description}
@@ -77,24 +70,6 @@ const FoodsTable = ({
                 </TableRow>
               ))}
           </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={3}
-                count={totalHits}
-                rowsPerPage={foods.length}
-                page={currentPage - 1}
-                SelectProps={{
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                }}
-                onChangePage={handleChangePage}
-                // onChangeRowsPerPage={handleChangeRowsPerPage}
-                // ActionsComponent={TablePaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
     )
