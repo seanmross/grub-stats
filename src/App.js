@@ -2,6 +2,7 @@ import React from 'react';
 import FoodsTable from './components/FoodsTable';
 import "./styles/styles.scss";
 import Header from './components/Header';
+import Search from './components/Search';
 
 class App extends React.Component {
   state = {
@@ -26,26 +27,28 @@ class App extends React.Component {
 
       fetch(endpoint)
         .then((res) => res.json())
-        .then(res => {
-          // Refine search to look for exact match only
-          if (res.totalHits && res.totalHits !== 0) {
-            const foods = res.foods.filter(
-              (food) => food.description.toLowerCase() === search
-            );
-            return { foods };
-          } else {
-            return res;
-          }
-        })
+        // .then(res => {
+        //   // Refine search to look for exact match only
+        //   if (res.totalHits && res.totalHits !== 0) {
+        //     const foods = res.foods.filter(
+        //       (food) => food.description.toLowerCase() === search
+        //     );
+        //     return { foods, totalHits: foods.length };
+        //   } else {
+        //     return res;
+        //   }
+        // })
         .then(
           (result) => {
             console.log(result);
+            const { foods, totalHits } = result;
 
             this.setState({
               isLoaded: true,
               error: null,
-              foods: result.foods,
+              foods,
               search,
+              totalHits
             });
           },
           (error) => {
@@ -67,20 +70,24 @@ class App extends React.Component {
       totalHits,
     } = this.state;
 
-    const displayLoading = <div>Loading...</div>;
+    const displayLoading = (
+      <div style={{ margin: '16px' }}>
+        Loading...
+      </div>
+    );
 
     const displayResults = (
       <div>
         {isLoaded && foods && (
-          <div>
-            {totalHits} results for "{search}"
+          <div style={{ margin: "16px" }}>
+            {totalHits} result(s) for "{search}"
           </div>
         )}
         <FoodsTable data={foods} />
       </div>
     );
 
-    const title = 'nutrition hack';
+    const title = 'food tilt';
     const subtitle = ''
 
     return (
@@ -88,8 +95,9 @@ class App extends React.Component {
         <Header title={title} subtitle={subtitle} />
         <div className="container">
           <form onSubmit={this.handleSearch}>
-            <input autoFocus type="text" name="search" />
-            <button>Search</button>
+            <div className="search__wrapper">
+              <Search />
+            </div>
             {error && <div>Error fetching data: {error.message}</div>}
             {!isLoaded ? displayLoading : displayResults}
           </form>

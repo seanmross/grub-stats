@@ -37,7 +37,7 @@ const FoodsTable = ({ data }) => {
         <Table className={styles.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Food (100g serving)</TableCell>
+              <TableCell>Food (100g/3.5oz serving)</TableCell>
               <TableCell align="right">Calories</TableCell>
               <TableCell align="right">Fat&nbsp;(g)</TableCell>
               <TableCell align="right">Carbs&nbsp;(g)</TableCell>
