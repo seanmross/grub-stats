@@ -3,6 +3,8 @@ import FoodsTable from './components/FoodsTable';
 import "./styles/styles.scss";
 import Header from './components/Header';
 import Search from './components/Search';
+import NumSearchResults from './components/NumSearchResults';
+import Loading from './components/Loading';
 
 class App extends React.Component {
   state = {
@@ -61,11 +63,11 @@ class App extends React.Component {
     }
   };
 
-  handleSearchChange = (e) => {
+  handleSearchInputChange = (e) => {
     this.setState({ searchValue: e.target.value });
   }
 
-  handleSearchClear = () => {
+  handleSearchInputClear = () => {
     this.setState({ searchValue: "" });
     document.getElementById('search').focus();
   }
@@ -73,15 +75,9 @@ class App extends React.Component {
   render() {
     const { error, isLoaded, foods, searchResult, totalHits } = this.state;
 
-    const displayLoading = <div style={{ margin: "16px" }}>Loading...</div>;
-
-    const displayResults = (
+    const template = (
       <div>
-        {isLoaded && foods && (
-          <div style={{ margin: "16px" }}>
-            {totalHits} result(s) for "{searchResult}"
-          </div>
-        )}
+        {isLoaded && foods && <NumSearchResults searchResult={searchResult} totalHits={totalHits} />}
         <FoodsTable data={foods} />
       </div>
     );
@@ -97,12 +93,12 @@ class App extends React.Component {
             <div className="search__wrapper">
               <Search
                 searchValue={this.state.searchValue}
-                change={this.handleSearchChange}
-                clear={this.handleSearchClear}
+                change={this.handleSearchInputChange}
+                clear={this.handleSearchInputClear}
               />
             </div>
             {error && <div>Error fetching data: {error.message}</div>}
-            {!isLoaded ? displayLoading : displayResults}
+            {!isLoaded ? <Loading /> : template}
           </form>
         </div>
       </div>
