@@ -9,6 +9,8 @@ class App extends React.Component {
     error: null,
     isLoaded: true,
     foods: null,
+    searchValue: "",
+    searchResult: ""
   };
 
   handleSearch = (e) => {
@@ -18,10 +20,8 @@ class App extends React.Component {
     if (search) {
       const api =
         "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=DEMO_KEY";
-      
-      const endpoint = encodeURI(
-        api.concat(`&query=${search}`)
-      );
+
+      const endpoint = encodeURI(api.concat(`&query=${search}`));
 
       this.setState({ isLoaded: false });
 
@@ -47,8 +47,8 @@ class App extends React.Component {
               isLoaded: true,
               error: null,
               foods,
-              search,
-              totalHits
+              searchResult: search,
+              totalHits,
             });
           },
           (error) => {
@@ -61,34 +61,33 @@ class App extends React.Component {
     }
   };
 
-  render() {
-    const {
-      error,
-      isLoaded,
-      foods,
-      search,
-      totalHits,
-    } = this.state;
+  handleSearchChange = (e) => {
+    this.setState({ searchValue: e.target.value });
+  }
 
-    const displayLoading = (
-      <div style={{ margin: '16px' }}>
-        Loading...
-      </div>
-    );
+  handleSearchClear = () => {
+    this.setState({ searchValue: "" });
+    document.getElementById('search').focus();
+  }
+
+  render() {
+    const { error, isLoaded, foods, searchResult, totalHits } = this.state;
+
+    const displayLoading = <div style={{ margin: "16px" }}>Loading...</div>;
 
     const displayResults = (
       <div>
         {isLoaded && foods && (
           <div style={{ margin: "16px" }}>
-            {totalHits} result(s) for "{search}"
+            {totalHits} result(s) for "{searchResult}"
           </div>
         )}
         <FoodsTable data={foods} />
       </div>
     );
 
-    const title = 'food tilt';
-    const subtitle = ''
+    const title = "grub stats";
+    const subtitle = "going beyond the macros";
 
     return (
       <div>
@@ -96,7 +95,11 @@ class App extends React.Component {
         <div className="container">
           <form onSubmit={this.handleSearch}>
             <div className="search__wrapper">
-              <Search />
+              <Search
+                searchValue={this.state.searchValue}
+                change={this.handleSearchChange}
+                clear={this.handleSearchClear}
+              />
             </div>
             {error && <div>Error fetching data: {error.message}</div>}
             {!isLoaded ? displayLoading : displayResults}

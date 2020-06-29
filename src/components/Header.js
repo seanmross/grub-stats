@@ -8,9 +8,14 @@ const logoStyle = {
 
 const Header = (props) => (
   <div className="header">
-    <div className="container--flex">
-      <h1 className="header__title">{props.title}</h1>
-      <img alt="logo" src={logo} style={logoStyle} />
+    <div className="container container--flex-col">
+      <div className="header__upper">
+        <h1 className="header__title">{props.title}</h1>
+        <img alt="logo" src={logo} style={logoStyle} />
+      </div>
+      <div>
+        <p className="header__subtitle">{props.subtitle}</p>
+      </div>
     </div>
   </div>
 );

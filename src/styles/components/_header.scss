@@ -5,6 +5,11 @@
     padding: $m-size 0;
 }
 
+.header__upper {
+    display: flex;
+    margin-bottom: .5rem;
+}
+
 // BEM naming convention (Block Element Modifier)
 .header__title {
     font-size: $l-size;
@@ -12,10 +17,11 @@
 }
 
 .header__subtitle {
-    color: $off-white;
-    font-size: $m-size;
-    font-weight: 500;
+    color: white;
+    line-height: 1.5em;
+    font-size: 1.3em;
     margin: 0;
+    letter-spacing: 0.25rem;
 }
 
 @media (min-width: $desktop-breakpoint) {
